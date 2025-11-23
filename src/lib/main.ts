@@ -7,6 +7,10 @@ import percentage from "./utils/number/percentage";
 import roundTo from "./utils/number/round-to";
 import { sum } from "./utils/number/sum";
 import { uniqueArray } from "./utils/number/unique-array";
+import capitalize from "./utils/string/capitalize";
+import maskEmail from "./utils/string/maskEmail";
+import slugify from "./utils/string/slugify";
+import truncate from "./utils/string/truncate";
 
 export default {
   Builder,
@@ -17,5 +21,9 @@ export default {
   median,
   percentage,
   roundTo,
-  sum
+  sum,
+  capitalize,
+  maskEmail,
+  slugify,
+  truncate
 };
