@@ -4,12 +4,17 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import RoundTo from './lib/utils/number/round-to'
 import percentage from './lib/utils/number/percentage'
+import capitalize from './lib/utils/string/capitalize'
+import slugify from './lib/utils/string/slugify'
 
 function App() {
   const [count, setCount] = useState(0)
 
   console.log(percentage({part : 20, total : 100}))
+  console.log(capitalize("hallosemuanya makan"))
+  console.log(slugify("Hallo Semuanya"))
 
+  
   return (
     <>
       <div>
