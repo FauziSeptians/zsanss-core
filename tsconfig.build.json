@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "declaration": true,                // ⬅️ generate .d.ts
+    "declarationDir": "./dist",         // ⬅️ output types ke dist
+    "emitDeclarationOnly": true,        // ⬅️ hanya emit .d.ts
+    "outDir": "./dist",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "strict": true,
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["lib/*"]
+    }
+  },
+  "include": ["src/lib"],               // ⬅️ hanya source library
+  "exclude": ["src/**/*.test.ts", "src/**/*.spec.ts"]
+}
