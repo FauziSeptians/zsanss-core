@@ -2,9 +2,13 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import RoundTo from './lib/utils/number/round-to'
+import percentage from './lib/utils/number/percentage'
 
 function App() {
   const [count, setCount] = useState(0)
+
+  console.log(percentage({part : 20, total : 100}))
 
   return (
     <>
