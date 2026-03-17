@@ -28,7 +28,10 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+  "docs:gen": "typedoc --options typedoc.json",
+  "docs:dev": "vitepress dev docs",
+  "docs:build": "npm run docs:gen && vitepress build docs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -40,6 +43,7 @@
     "react-hook-form": "^7.71.2",
     "vite-plugin-dts": "^4.5.4",
     "vite-tsconfig-paths": "^5.1.4",
+    "vitepress-sidebar": "^1.33.1",
     "zustand": "^5.0.12"
   },
   "devDependencies": {
@@ -52,8 +56,11 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
+    "typedoc": "^0.28.17",
+    "typedoc-plugin-markdown": "^4.10.0",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.4",
-    "vite": "^7.2.4"
+    "vite": "^7.2.4",
+    "vitepress": "^1.6.4"
   }
 }

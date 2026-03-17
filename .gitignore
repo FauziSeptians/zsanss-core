@@ -7,18 +7,33 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
+# Dependency directories
+node_modules/
+
+# Build outputs
+dist/
+dist-ssr/
 *.local
+
+# --- VitePress & TypeDoc Specific ---
+# Abaikan cache internal VitePress (Penyebab utama sidebar nyangkut)
+docs/.vitepress/cache/
+# Abaikan hasil build final dokumentasi
+docs/.vitepress/dist/
+# Abaikan folder API karena di-generate otomatis oleh TypeDoc
+docs/api/
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
-.idea
+.idea/
 .DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# Testing
+coverage/
+.nyc_output/

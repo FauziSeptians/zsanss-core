@@ -1,0 +1,26 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": [
+    "./src/lib/utils/hooks",
+    "./src/lib/utils/number",
+    "./src/lib/utils/object",
+    "./src/lib/utils/services",
+    "./src/lib/utils/string",
+    "./src/lib/utils/design-patern"
+  ],
+  "entryPointStrategy": "expand",
+  "out": "docs/api",
+  "plugin": ["typedoc-plugin-markdown"],
+  
+  /* STRATEGI FLAT: Mencegah folder /functions/ atau /classes/ */
+  "outputFileStrategy": "members",
+  "flattenOutputFiles": true,
+  "entryFileName": "index.md",
+  
+  /* PENGATURAN TAMPILAN (Tanpa opsi yang bikin error) */
+  "hidePageTitle": false,
+  "hideBreadcrumbs": true,
+  "cleanOutputDir": true,
+  "excludeGroups": true,
+  "useCodeBlocks": true
+}
