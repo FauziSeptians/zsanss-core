@@ -29,9 +29,9 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-  "docs:gen": "typedoc --options typedoc.json",
-  "docs:dev": "vitepress dev docs",
-  "docs:build": "npm run docs:gen && vitepress build docs"
+    "docs:gen": "typedoc --options typedoc.json",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "npm run docs:gen && vitepress build docs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -62,5 +62,8 @@
     "typescript-eslint": "^8.46.4",
     "vite": "^7.2.4",
     "vitepress": "^1.6.4"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "4.9.5"
   }
 }
