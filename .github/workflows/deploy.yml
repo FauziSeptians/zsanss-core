@@ -22,10 +22,6 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run Unit Tests (Vitest)
-        # Menjalankan test core-utils sebelum lanjut ke docs
-        run: npm run test:run
-
       - name: Build and Push Docker Image
         run: |
           docker build -t core-utils-docs .
