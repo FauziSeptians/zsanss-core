@@ -3,29 +3,33 @@ import { useState } from 'react';
 import { useQuery, type QueryKey } from '@tanstack/react-query';
 
 /**
- * Arah pengurutan data.
+ * Arah pengurutan data: 'asc' untuk urutan menaik, 'desc' untuk urutan menurun.
  */
 type SortDirection = 'asc' | 'desc';
 
 /**
  * Representasi satu aturan pengurutan untuk kolom tertentu.
- * @template T Tipe data objek entitas.
+ * 
+ * @template T - Tipe data objek entitas yang sedang dikelola.
  */
 interface SortRule<T> {
-  /** Nama properti yang diurutkan. */
+  /** Nama properti (field) yang diurutkan. */
   key: keyof T;
-  /** Arah pengurutan (asc atau desc). */
+  /** Arah pengurutan ('asc' atau 'desc'). */
   direction: SortDirection;
 }
 
 /**
- * Properti untuk hook useDataTableMultiQuery.
+ * Properti untuk konfigurasi hook {@link useDataTableMultiQuery}.
+ * 
+ * @template T - Tipe data item dalam tabel.
  */
 interface UseDataTableMultiProps<T> {
-  /** Key unik untuk TanStack Query guna keperluan caching. */
+  /** Key unik yang digunakan TanStack Query untuk keperluan caching. */
   queryKey: QueryKey;
-  /** * Fungsi untuk mengambil data dari server.
-   * @param params Objek yang berisi query pencarian dan daftar aturan pengurutan.
+  /** 
+   * Fungsi untuk mengambil data dari server.
+   * @param params - Objek yang berisi query `search` dan daftar aturan pengurutan `sorts`.
    */
   fetchFn: (params: { search: string; sorts: SortRule<T>[] }) => Promise<T[]>;
 }
@@ -33,18 +37,25 @@ interface UseDataTableMultiProps<T> {
 /**
  * Hook untuk mengelola state tabel yang mendukung pencarian dan pengurutan multi-kolom
  * yang terintegrasi langsung dengan TanStack Query (Server-side).
- * * @template T Tipe data item dalam tabel.
- * @param props Objek konfigurasi {@link UseDataTableMultiProps}.
- * * @returns Objek yang berisi state query, data yang sudah di-fetch, dan fungsi kontrol tabel.
- * * @example
+ * 
+ * Hook ini menangani state pencarian, state pengurutan (termasuk multi-select), 
+ * serta otomatis melakukan fetch ulang ketika parameter berubah.
+ * 
+ * @template T - Tipe data item dalam tabel.
+ * @param props - Objek konfigurasi yang meliputi `queryKey` dan `fetchFn`.
+ * @returns Objek yang berisi state query, data yang sudah di-fetch, dan fungsi kontrol tabel.
+ * 
+ * @example
  * ```tsx
  * const { data, requestSort, getSortDirection, getSortOrder } = useDataTableMultiQuery<User>({
- * queryKey: ['users'],
- * fetchFn: ({ search, sorts }) => userService.getAll({ search, sorts })
+ *   queryKey: ['users'],
+ *   fetchFn: ({ search, sorts }) => userService.getAll({ search, sorts })
  * });
- * * // Di dalam render:
+ * 
+ * // Di dalam render:
  * <th onClick={(e) => requestSort('name', e.shiftKey)}>
- * Nama {getSortDirection('name')} {getSortOrder('name') > 0 && `(${getSortOrder('name')})`}
+ *   Nama {getSortDirection('name') === 'asc' ? '↑' : '↓'} 
+ *   {getSortOrder('name') > 0 && <span>({getSortOrder('name')})</span>}
  * </th>
  * ```
  */
@@ -67,14 +78,16 @@ export function useDataTableMultiQuery<T>({
 
   /**
    * Menangani permintaan pengurutan pada kolom tertentu.
-   * * Logika:
-   * 1. Jika `multiSelect` false: Reset semua sort dan hanya gunakan kolom ini.
-   * 2. Jika `multiSelect` true: 
-   * - Jika kolom belum ada: Tambahkan ke daftar.
-   * - Jika kolom sudah 'asc': Ubah ke 'desc'.
-   * - Jika kolom sudah 'desc': Hapus dari daftar (reset kolom tersebut).
-   * * @param key Properti objek yang ingin diurutkan.
-   * @param multiSelect Jika true (misal via Shift+Click), urutan kolom lain tidak akan dihapus.
+   * 
+   * Logika Pengurutan:
+   * 1. Jika `multiSelect` (Shift+Click) bernilai `false`: Mereset semua sort dan hanya menggunakan kolom ini.
+   * 2. Jika `multiSelect` bernilai `true`: 
+   *    - Jika kolom belum ada: Menambahkan ke daftar urutan paling belakang.
+   *    - Jika kolom sudah 'asc': Mengubah arah menjadi 'desc'.
+   *    - Jika kolom sudah 'desc': Menghapus kolom tersebut dari daftar pengurutan.
+   * 
+   * @param key - Properti objek yang ingin diurutkan.
+   * @param multiSelect - Flag untuk mengaktifkan multi-sorting (biasanya dari `event.shiftKey`).
    */
   const requestSort = (key: keyof T, multiSelect: boolean = false) => {
     setSorts((prev) => {
@@ -98,24 +111,27 @@ export function useDataTableMultiQuery<T>({
 
   return {
     ...query,
-    /** Data hasil fetch (default ke array kosong). */
+    /** Data hasil fetch, default mengembalikan array kosong jika belum ada data. */
     data: query.data ?? [],
-    /** State pencarian. */
+    /** State pencarian saat ini. */
     search,
-    /** Fungsi untuk mengubah state pencarian. */
+    /** Fungsi untuk memperbarui state pencarian. */
     setSearch,
-    /** Daftar aturan pengurutan aktif saat ini. */
+    /** Daftar aturan pengurutan kolom yang aktif saat ini. */
     sorts,
-    /** Fungsi untuk memicu pengurutan pada header tabel. */
+    /** Fungsi untuk memicu pengurutan (sort) pada kolom tertentu. */
     requestSort,
-    /** * Mendapatkan arah sort kolom tertentu. 
-     * @param key Nama kolom.
+    /** 
+     * Mendapatkan arah pengurutan saat ini untuk kolom tertentu.
+     * @param key - Nama kolom yang ingin diperiksa.
+     * @returns 'asc', 'desc', atau undefined jika tidak diurutkan.
      */
     getSortDirection: (key: keyof T) => sorts.find((s) => s.key === key)?.direction,
-    /** * Mendapatkan nomor urutan prioritas kolom dalam sorting.
-     * @param key Nama kolom.
-     * @returns Angka urutan (1, 2, dst) atau 0 jika tidak diurutkan.
+    /** 
+     * Mendapatkan nomor urutan prioritas kolom dalam sistem multi-sorting.
+     * @param key - Nama kolom yang ingin diperiksa.
+     * @returns Angka urutan (1, 2, dst) atau 0 jika kolom tidak masuk dalam pengurutan.
      */
     getSortOrder: (key: keyof T) => sorts.findIndex((s) => s.key === key) + 1,
   };
-}
+}

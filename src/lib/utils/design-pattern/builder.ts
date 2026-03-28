@@ -1,8 +1,8 @@
 /**
- * Represents a user profile with basic information.
+ * Representasi profil pengguna dengan informasi dasar.
  *
  * @example
- * ```ts
+ * ```tsx
  * const profile: Profile = {
  *   name: "Fauzi",
  *   age: 27,
@@ -11,26 +11,26 @@
  * ```
  */
 export type Profile = {
-  /** The user's full name */
+  /** Nama lengkap pengguna. */
   name: string;
 
-  /** The user's age in years */
+  /** Usia pengguna dalam tahun. */
   age: number;
 
-  /** The user's class identifier */
+  /** Identifikasi kelas atau grup pengguna. */
   class: string;
 };
 
 /**
- * A generic Builder class for constructing objects of type `T`.
+ * Kelas Builder generik untuk mengonstruksi objek bertipe `T`.
  * 
- * This class allows setting properties incrementally and 
- * ensures type safety by enforcing keys and values from `T`.
+ * Kelas ini memungkinkan pengaturan properti secara bertahap (incremental) dan 
+ * menjamin keamanan tipe (type safety) dengan validasi key dan value dari `T`.
  * 
- * @typeParam T - The object type to be built.
+ * @template T - Tipe objek yang akan dibangun. Harus berupa objek.
  *
  * @example
- * ```ts
+ * ```tsx
  * import { Builder, Profile } from "./builder";
  *
  * const profile = new Builder<Profile>()
@@ -40,26 +40,21 @@ export type Profile = {
  *   .build();
  *
  * console.log(profile);
- * // Output:
- * // {
- * //   name: "Fauzi",
- * //   age: 27,
- * //   class: "12012"
- * // }
+ * // Output: { name: "Fauzi", age: 27, class: "12012" }
  * ```
  */
 export class Builder<T extends object> {
   private readonly data: Partial<T> = {};
 
   /**
-   * Sets a property on the builder.
+   * Menetapkan nilai untuk properti tertentu pada builder.
    *
-   * @param key - The property key of type `T`.
-   * @param value - The value corresponding to the property key.
-   * @returns The current builder instance for chaining.
+   * @param key - Nama properti dari tipe `T`.
+   * @param value - Nilai yang sesuai dengan properti tersebut.
+   * @returns Instance builder saat ini untuk mendukung method chaining.
    *
    * @example
-   * ```ts
+   * ```tsx
    * const builder = new Builder<Profile>();
    * builder.set("name", "Fauzi");
    * ```
@@ -70,13 +65,13 @@ export class Builder<T extends object> {
   }
 
   /**
-   * Builds and returns the final object of type `T`.
+   * Membangun dan mengembalikan objek akhir bertipe `T`.
    *
-   * @throws Error if no properties have been set.
-   * @returns The constructed object of type `T`.
+   * @throws {Error} Jika tidak ada properti yang diatur di dalam builder.
+   * @returns Objek yang telah dikonstruksi dengan tipe `T`.
    *
    * @example
-   * ```ts
+   * ```tsx
    * const profile = new Builder<Profile>()
    *   .set("name", "Fauzi")
    *   .set("age", 27)

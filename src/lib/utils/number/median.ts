@@ -1,28 +1,21 @@
 /**
- * Menghitung median dari sebuah array angka.
- *
- * Median adalah nilai tengah dari data yang sudah diurutkan.
- * - Jika jumlah elemen ganjil, median adalah elemen di posisi tengah.
- * - Jika jumlah elemen genap, median adalah rata-rata dari dua elemen tengah.
- * Jika array kosong, fungsi akan mengembalikan 0.
- *
- * @param arr - Array berisi angka-angka yang akan dihitung median-nya.
- * @returns Nilai median dari array, atau 0 jika array kosong.
- *
+ * Menghitung nilai median (nilai tengah) dari sebuah array angka.
+ * 
+ * Median adalah nilai yang berada tepat di tengah-tengah dataset yang telah diurutkan.
+ * - Jika jumlah elemen ganjil, median adalah nilai di posisi paling tengah.
+ * - Jika jumlah elemen genap, median adalah rata-rata dari dua nilai tengah.
+ * 
+ * @param arr - Array berisi deretan angka yang akan dihitung median-nya.
+ * @returns Nilai median dari dataset. Mengembalikan `0` jika array kosong.
+ * 
  * @example
- * // Array dengan jumlah elemen ganjil
+ * ```tsx
+ * // Jumlah ganjil: [1, 2, 3] -> Median: 2
  * const m1 = median([1, 3, 2]);
- * console.log(m1); // 2
- *
- * @example
- * // Array dengan jumlah elemen genap
+ * 
+ * // Jumlah genap: [1, 2, 3, 4] -> Median: (2+3)/2 = 2.5
  * const m2 = median([1, 2, 3, 4]);
- * console.log(m2); // 2.5
- *
- * @example
- * // Array kosong menghasilkan 0
- * const m3 = median([]);
- * console.log(m3); // 0
+ * ```
  */
 export function median(arr: number[]): number {
   if (arr.length === 0) return 0;

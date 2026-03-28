@@ -1,26 +1,18 @@
 /**
- * Menjumlahkan semua elemen dalam sebuah array angka.
- *
- * Fungsi ini menggunakan `Array.prototype.reduce` untuk menghitung total
- * dari seluruh nilai yang ada di dalam array. Jika array kosong, hasilnya adalah 0.
- *
- * @param arr - Array berisi angka-angka yang akan dijumlahkan.
- * @returns Jumlah total dari semua elemen array.
- *
+ * Menjumlahkan seluruh elemen angka yang ada di dalam sebuah array.
+ * 
+ * Fungsi ini menggunakan `Array.prototype.reduce` untuk menghitung total akumulasi 
+ * dari seluruh nilai. Sangat efisien untuk perhitungan total dataset numerik.
+ * 
+ * @param arr - Array berisi deretan angka yang akan dijumlahkan.
+ * @returns Jumlah total (sum) dari seluruh elemen. Mengembalikan `0` jika array kosong.
+ * 
  * @example
- * // Menjumlahkan angka dalam array
- * const total1 = sum([1, 2, 3, 4]);
- * console.log(total1); // 10
- *
- * @example
- * // Array dengan satu elemen
- * const total2 = sum([100]);
- * console.log(total2); // 100
- *
- * @example
- * // Array kosong menghasilkan 0
- * const total3 = sum([]);
- * console.log(total3); // 0
+ * ```tsx
+ * const data = [10, 20, 30, 40];
+ * const total = sum(data);
+ * // Hasil: 100
+ * ```
  */
 export function sum(arr: number[]): number {
   return arr.reduce((acc, val) => acc + val, 0);

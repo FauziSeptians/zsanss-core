@@ -3,13 +3,22 @@ import { onlineManager } from '@tanstack/react-query';
 
 /**
  * Hook untuk mendeteksi status koneksi internet secara real-time.
- * Menggunakan onlineManager dari TanStack Query untuk konsistensi status di seluruh aplikasi.
- * * @returns {boolean} isOnline - True jika terhubung ke internet, False jika offline.
- * * @example
+ * 
+ * Menggunakan `onlineManager` dari TanStack Query untuk memastikan konsistensi status 
+ * koneksi di seluruh aplikasi dan sinkronisasi dengan query fungsional lainnya.
+ * 
+ * @returns {boolean} `isOnline` - Bernilai `true` jika perangkat terhubung ke internet, `false` jika offline.
+ * 
+ * @example
  * ```tsx
  * const isOnline = useOnlineStatus();
- * * if (!isOnline) {
- * return <div className="bg-red-500">Anda sedang offline. Data mungkin tidak akurat.</div>;
+ * 
+ * if (!isOnline) {
+ *   return (
+ *     <div className="bg-destructive text-white p-2">
+ *       Anda sedang offline. Data yang ditampilkan mungkin tidak terbaru.
+ *     </div>
+ *   );
  * }
  * ```
  */
@@ -21,13 +30,13 @@ export function useOnlineStatus(): boolean {
     /**
      * Berlangganan (subscribe) ke perubahan status dari onlineManager.
      * Fungsi ini akan dipanggil secara otomatis oleh TanStack Query 
-     * ketika browser mendeteksi perubahan network.
+     * ketika browser mendeteksi perubahan network (online/offline).
      */
     const unsubscribe = onlineManager.subscribe((online) => {
       setIsOnline(online);
     });
 
-    // Membersihkan subscription saat komponen unmount
+    // Membersihkan subscription saat komponen unmount untuk mencegah memory leak
     return () => {
       unsubscribe();
     };

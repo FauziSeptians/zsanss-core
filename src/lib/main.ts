@@ -1,6 +1,6 @@
 // --- Design Patterns ---
-export { Builder } from "../lib/utils/design-patern/builder";
-export { default as factory } from "./utils/design-patern/factory";
+export { Builder } from "../lib/utils/design-pattern/builder";
+export { default as factory } from "./utils/design-pattern/factory";
 
 // --- Number Utils ---
 export { default as formatCurrency } from "./utils/number/format-currency";

@@ -11,11 +11,16 @@ import { z } from 'zod';
 
 /**
  * Konfigurasi opsi untuk hook {@link useSyncForm}.
- * Menggabungkan properti standar React Hook Form dengan fitur sinkronisasi store.
- * * @template T - Tipe data field values yang valid.
+ * 
+ * Menggabungkan properti standar dari React Hook Form (`UseFormProps`) dengan 
+ * fitur tambahan untuk sinkronisasi state ke store eksternal.
+ * 
+ * @template T - Tipe data field values yang valid dan sesuai dengan skema form.
  */
 export interface SyncFormOptions<T extends FieldValues> extends UseFormProps<T> {
-  /** * Jika `true`, form akan membaca dan mengirim data ke Zustand Store secara real-time.
+  /** 
+   * Jika bernilai `true`, form akan secara otomatis membaca dan mengirimkan pembaruan 
+   * data ke Zustand Store secara real-time setiap kali ada perubahan input. 
    * Default: `true`.
    */
   syncToStore?: boolean;
@@ -23,24 +28,35 @@ export interface SyncFormOptions<T extends FieldValues> extends UseFormProps<T> 
 
 /**
  * Hook utilitas untuk menyinkronkan state antara React Hook Form, validasi Zod, dan Zustand Store.
- * * Hook ini sangat berguna untuk:
- * 1. **Multi-step forms**: Data tersimpan di store saat pindah step.
- * 2. **Auto-save**: Data otomatis terupdate di global state tanpa tombol submit.
- * 3. **Type-safety**: Integrasi penuh antara skema Zod dan output form.
- * * @template T - Skema Zod yang mendefinisikan struktur data form.
- * * @param useStore - Hook selector dari Zustand store yang memiliki properti `values` dan fungsi `setValues`.
- * @param schema - Objek skema Zod untuk validasi.
- * @param options - Opsi tambahan termasuk konfigurasi standar `useForm` (mode, defaultValues, dll).
- * * @returns Object {@link UseFormReturn} standar dari RHF yang sudah terintegrasi.
- * * @example
+ * 
+ * Hook ini sangat efektif digunakan pada skenario berikut:
+ * 1. **Multi-step forms**: Menjaga data tetap aman di store global saat pengguna berpindah antar langkah.
+ * 2. **Auto-save**: Memperbarui state global secara otomatis tanpa memerlukan interaksi tombol submit.
+ * 3. **Type-safety**: Integrasi yang sangat ketat antara skema Zod dengan output fungsional form.
+ * 
+ * @template T - Skema Zod yang mendefinisikan struktur, validasi, dan tipe data form.
+ * 
+ * @param useStore - Hook selector dari Zustand store yang wajib memiliki properti `values` dan fungsi `setValues`.
+ * @param schema - Objek skema Zod yang akan digunakan untuk validasi input.
+ * @param options - Opsi konfigurasi tambahan yang mencakup pengaturan `useForm` standar.
+ * @returns Objek {@link UseFormReturn} dari React Hook Form yang sudah terintegrasi dengan store.
+ * 
+ * @example
  * ```tsx
- * const schema = z.object({ name: z.string().min(3) });
+ * const schema = z.object({ 
+ *   userName: z.string().min(3, "Minimal 3 karakter") 
+ * });
+ * 
  * const form = useSyncForm(useProfileStore, schema);
- * * return (
- * <form onSubmit={form.handleSubmit(d => console.log(d))}>
- * <input {...form.register('name')} />
- * {form.formState.errors.name && <span>Terlalu pendek!</span>}
- * </form>
+ * 
+ * return (
+ *   <form onSubmit={form.handleSubmit(data => console.log(data))}>
+ *     <input {...form.register('userName')} />
+ *     {form.formState.errors.userName && (
+ *       <span>{form.formState.errors.userName.message}</span>
+ *     )}
+ *     <button type="submit">Simpan</button>
+ *   </form>
  * );
  * ```
  */

@@ -1,56 +1,41 @@
-name: Test and Deploy Core-Utils Docs
+name: Publish to npm on tag
 
 on:
   push:
-    branches:
-      - main
-      - release/prod
+    tags:
+      - 'v*'
 
 jobs:
-  test-and-build:
+  publish:
+    name: Publish npm package
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org'
+
+      # Caching dependencies
+      - name: Cache npm dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      - name: Build and Push Docker Image
-        run: |
-          docker build -t core-utils-docs .
-          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-          docker tag core-utils-docs ${{ secrets.DOCKER_USERNAME }}/core-utils-docs:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/core-utils-docs:latest
+      - name: Build package
+        run: npm run build
 
-  deploy:
-    needs: test-and-build
-    runs-on: ubuntu-latest
-    steps:
-      - name: SSH and Update Server
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          script: |
-            sudo docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_PASSWORD }}"
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/core-utils-docs:latest
-            
-            sudo docker stop core-utils-docs || true
-            sudo docker rm core-utils-docs || true
-            
-            # Jalankan di port yang kamu mau, misal 8080
-            sudo docker run -d \
-              --name core-utils-docs \
-              --restart always \
-              -p 8080:80 \
-              ${{ secrets.DOCKER_USERNAME }}/core-utils-docs:latest
-            
-            sudo docker image prune -f
+      - name: Publish to npm
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

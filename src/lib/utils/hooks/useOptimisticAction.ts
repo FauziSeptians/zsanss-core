@@ -1,43 +1,55 @@
 import { useState, useCallback } from 'react';
 
 /**
- * Properti konfigurasi untuk hook useOptimisticAction.
- * @template T Tipe data dari entitas yang akan diolah.
+ * Properti konfigurasi untuk hook {@link useOptimisticAction}.
+ * 
+ * @template T - Tipe data dari entitas atau objek yang akan dikelola.
  */
 interface UseOptimisticProps<T> {
-  /** * Data awal yang sinkron dengan state server saat ini. 
+  /** 
+   * Data awal yang saat ini tersinkronisasi dengan state di server.
    */
   data: T;
-  /** * Fungsi asinkron untuk melakukan pembaruan data ke server (misal: API call).
-   * @param newData Data yang telah dimodifikasi secara lokal.
-   * @returns Promise berisi hasil respons server.
+  /** 
+   * Fungsi asinkron untuk melakukan pembaruan data ke server (misal: API patch/put).
+   * @param newData - Data yang telah dimodifikasi secara lokal untuk dikirim ke server.
+   * @returns Promise yang mengembalikan hasil respons dari server.
    */
   onUpdate: (newData: T) => Promise<T>;
-  /** * Callback opsional yang dipanggil ketika fungsi `onUpdate` gagal.
-   * Berguna untuk menampilkan notifikasi error (toast) kepada pengguna.
-   * @param error Objek error yang dilempar oleh server/network.
-   * @param rollbackData Data asli sebelum perubahan dilakukan (untuk referensi).
+  /** 
+   * Callback opsional yang dipanggil jika fungsi `onUpdate` mengalami kegagalan.
+   * Sangat berguna untuk memberikan umpan balik (seperti toast error) kepada pengguna.
+   * @param error - Objek error yang ditangkap saat proses pembaruan gagal.
+   * @param rollbackData - Data asli sebelum perubahan dilakukan, digunakan untuk referensi saat error.
    */
   onError?: (error: unknown, rollbackData: T) => void;
 }
 
 /**
  * Hook kustom untuk mengelola pembaruan antarmuka secara optimis (Optimistic UI).
- * * Memungkinkan UI berubah seketika tanpa menunggu respons server. Jika permintaan 
- * server gagal, hook ini secara otomatis akan melakukan rollback ke state sebelumnya.
- * * @template T Tipe data objek yang dikelola.
- * @param props - Objek konfigurasi {@link UseOptimisticProps}.
- * * @returns Objek yang berisi state optimis, status pending, dan fungsi eksekusi.
- * * @example
+ * 
+ * Fitur ini memungkinkan antarmuka pengguna (UI) untuk berubah seketika tanpa perlu 
+ * menunggu respons dari server. Jika permintaan ke server gagal (error), hook ini 
+ * akan secara otomatis melakukan rollback ke state sebelumnya yang stabil.
+ * 
+ * @template T - Tipe data objek yang dikelola.
+ * @param props - Konfigurasi yang meliputi data awal, fungsi update, dan penanganan error.
+ * @returns Objek yang berisi state optimis (`optimisticData`), status pending (`isPending`), dan fungsi eksekusi (`execute`).
+ * 
+ * @example
  * ```tsx
  * // Contoh implementasi pada fitur Bookmark
  * const { optimisticData, execute, isPending } = useOptimisticAction({
- * data: { id: 1, isBookmarked: false },
- * onUpdate: async (newPost) => api.patch(`/posts/${newPost.id}`, newPost),
- * onError: (err) => toast.error("Gagal menyimpan bookmark")
+ *   data: { id: 1, isBookmarked: false },
+ *   onUpdate: async (newPost) => api.patch(`/posts/${newPost.id}`, newPost),
+ *   onError: (err) => toast.error("Gagal menyimpan bookmark")
  * });
- * * const handleToggle = () => {
- * execute((current) => ({ ...current, isBookmarked: !current.isBookmarked }));
+ * 
+ * const handleToggle = () => {
+ *   execute((current) => ({ 
+ *     ...current, 
+ *     isBookmarked: !current.isBookmarked 
+ *   }));
  * };
  * ```
  */
@@ -46,31 +58,34 @@ export function useOptimisticAction<T>({
   onUpdate,
   onError,
 }: UseOptimisticProps<T>) {
-  /** State lokal yang menampung data sementara (optimis). */
+  /** State lokal yang menampung data sementara (optimis) sebelum konfirmasi server. */
   const [optimisticData, setOptimisticData] = useState<T>(data);
   
-  /** Status yang menandakan apakah proses sinkronisasi server sedang berjalan. */
+  /** Status yang menandakan apakah proses sinkronisasi ke server sedang berlangsung. */
   const [isPending, setIsPending] = useState(false);
 
   /**
-   * Fungsi untuk menjalankan perubahan data.
-   * Secara instan memperbarui `optimisticData` dan memicu `onUpdate`.
-   * * @param updateFn Fungsi transformator yang menerima data saat ini dan mengembalikan data baru.
+   * Fungsi untuk mengeksekusi perubahan data secara optimis.
+   * 
+   * Fungsi ini akan memperbarui `optimisticData` secara instan di sisi klien
+   * dan kemudian memicu pemanggilan `onUpdate` asynchronous ke server.
+   * 
+   * @param updateFn - Fungsi transformator yang menerima data saat ini dan mengembalikan data baru.
    */
   const execute = useCallback(
     async (updateFn: (current: T) => T) => {
       const previousData = optimisticData;
       const newData = updateFn(optimisticData);
 
-      // 1. Tahap Optimis: Update UI tanpa menunggu server
+      // 1. Tahap Optimis: Update UI segera tanpa menunggu respons server
       setOptimisticData(newData);
       setIsPending(true);
 
       try {
-        // 2. Tahap Sinkronisasi: Kirim perubahan ke backend
+        // 2. Tahap Sinkronisasi: Kirim perubahan data ke backend
         await onUpdate(newData);
       } catch (err) {
-        // 3. Tahap Rollback: Kembalikan ke data lama jika server gagal
+        // 3. Tahap Rollback: Kembalikan ke state data lama jika terjadi kegagalan di server
         setOptimisticData(previousData);
         if (onError) {
           onError(err, previousData);
@@ -83,16 +98,20 @@ export function useOptimisticAction<T>({
   );
 
   return {
-    /** * Data yang sedang ditampilkan di UI. 
-     * Gunakan ini sebagai pengganti data asli dari props/state utama.
+    /** 
+     * Data yang sedang aktif ditampilkan di UI (mungkin berisi data optimis yang belum tersimpan). 
+     * Gunakan properti ini sebagai sumber data utama pada komponen Anda.
      */
     optimisticData,
-    /** * Fungsi pemicu perubahan. Masukkan logika manipulasi data di sini.
+    /** 
+     * Fungsi pemicu untuk melakukan perubahan data. 
+     * Menerima fungsi callback untuk memodifikasi state secara fungsional.
      */
     execute,
-    /** * Menandakan proses background ke server masih berlangsung. 
-     * Berguna untuk menampilkan indikator loading kecil atau menonaktifkan tombol.
+    /** 
+     * Menandakan bahwa proses sinkronisasi latar belakang ke server masih berjalan. 
+     * Umumnya digunakan untuk menampilkan indikator loading atau mendisabel interaksi.
      */
     isPending,
   };
-}
+}

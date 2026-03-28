@@ -1,20 +1,36 @@
 import { useState, useEffect, useRef } from 'react';
 
 /**
- * Properti untuk hook useAutoCarousel.
+ * Properti untuk konfigurasi hook {@link useAutoCarousel}.
+ * 
+ * @template T - Tipe data item yang ada di dalam array `items`.
  */
 interface UseAutoCarouselProps<T> {
-  /** Array data yang akan di-looping. */
+  /** Array data yang akan ditampilkan secara bergantian (looping). */
   items: T[];
-  /** Durasi perpindahan antar slide (ms). Default: 3000ms. */
+  /** Durasi perpindahan antar slide dalam milidetik (ms). Default: `3000`ms. */
   interval?: number;
 }
 
 /**
  * Hook untuk Carousel yang berjalan otomatis sepenuhnya.
- * Cocok untuk banner promo, testimonial slider, atau logo ticker.
- * * @example
- * const { activeItem } = useAutoCarousel({ items: bannerImages, interval: 5000 });
+ * 
+ * Sangat cocok digunakan untuk banner promosi, slider testimoni, atau ticker logo 
+ * yang memerlukan rotasi item otomatis tanpa interaksi pengguna yang kompleks.
+ * 
+ * @template T - Tipe data item dalam array.
+ * @param props - Objek properti yang berisi `items` dan `interval`.
+ * @returns Objek yang berisi item aktif (`activeItem`), indeks aktif (`activeIndex`), dan total item (`totalItems`).
+ * 
+ * @example
+ * ```tsx
+ * const { activeItem, activeIndex } = useAutoCarousel({ 
+ *   items: bannerImages, 
+ *   interval: 5000 
+ * });
+ * 
+ * return <img src={activeItem.url} alt={`Banner ${activeIndex}`} />;
+ * ```
  */
 export function useAutoCarousel<T>({
   items,
@@ -41,11 +57,11 @@ export function useAutoCarousel<T>({
   }, [items.length, interval]); // Hanya restart jika jumlah item atau durasi berubah
 
   return {
-    /** Item yang sedang aktif saat ini */
+    /** Item yang sedang aktif saat ini berdasarkan `activeIndex`. */
     activeItem: items[activeIndex],
-    /** Indeks saat ini (untuk keperluan styling bullet/indicator) */
+    /** Indeks item yang sedang aktif saat ini (0-based). */
     activeIndex,
-    /** Total item */
+    /** Jumlah total item yang tersedia di dalam array `items`. */
     totalItems: items.length,
   };
 }

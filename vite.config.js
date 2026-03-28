@@ -9,13 +9,13 @@ var __dirname = dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
     plugins: [react(), tsconfigPaths(), dts({
             tsconfigPath: "./tsconfig.app.json",
-            include: ["lib"],
+            include: ["src/lib"],
             insertTypesEntry: true
         })],
     resolve: {
         alias: [{
                 find: "@",
-                replacement: path.resolve(__dirname, "lib")
+                replacement: path.resolve(__dirname, "src/lib")
             }]
     },
     build: {
@@ -25,6 +25,17 @@ export default defineConfig({
             fileName: "zsanss-core",
             entry: path.resolve(__dirname, "./src/lib/main.ts"),
             formats: ["es", "umd"]
+        },
+        rollupOptions: {
+            external: ["react", "react-dom", "react/jsx-runtime", "@tanstack/react-query", "react-hook-form"],
+            output: {
+                globals: {
+                    "react": "React",
+                    "react-dom": "ReactDOM",
+                    "@tanstack/react-query": "ReactQuery",
+                    "react-hook-form": "ReactHookForm"
+                }
+            }
         }
     },
 });

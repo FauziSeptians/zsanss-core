@@ -1,28 +1,26 @@
 /**
- * Memotong string hingga panjang tertentu dari awal.
+ * Memotong (truncate) wujud sebuah string teks secara statis pada panjang tertentu.
  *
- * Fungsi ini menggunakan `substring` untuk mengambil bagian string
- * mulai dari indeks 0 hingga panjang yang ditentukan.
- * Jika panjang string lebih pendek dari `number`, hasilnya adalah string asli.
+ * Mekanismenya secara instan mengambil cuplikan substring mulai dari indeks terawal (kiri) 
+ * hingga menyentuh batas maksimum panjang yang ditentukan oleh target. 
+ * Pengecualian terjadi jika string ternyata lebih pendek dari limitasi, di mana nilai asli akan dipertahankan utuh.
  *
- * @param str - String yang ingin dipotong.
- * @param number - Jumlah karakter maksimum yang akan ditampilkan.
- * @returns String yang sudah dipotong sesuai panjang yang ditentukan.
- *
- * @example
- * // Memotong string menjadi 5 karakter
- * const short1 = truncate("Hello World", 5);
- * console.log(short1); // "Hello"
+ * @param str - Teks rujukan masukan yang akan dipotong.
+ * @param number - Batasan mutlak banyak maksimal karakter yang dibolehkan untuk ditampakkan.
+ * @returns String dengan format terpotong tanpa merubah wujud struktur dasar data.
  *
  * @example
- * // Memotong string menjadi 3 karakter
- * const short2 = truncate("React", 3);
- * console.log(short2); // "Rea"
+ * ```tsx
+ * const cuplikan1 = truncate("Hello World Selamat Pagi", 11);
+ * // Hasil: "Hello World"
+ * 
+ * const cuplikan2 = truncate("React", 3);
+ * // Hasil: "Rea"
  *
- * @example
- * // Jika panjang string lebih pendek dari number
- * const short3 = truncate("Hi", 5);
- * console.log(short3); // "Hi"
+ * // Jika target memotong lebih panjang daripada string asli
+ * const cuplikan3 = truncate("Hi", 5);
+ * // Hasil: "Hi"
+ * ```
  */
 export default function truncate(str: string, number: number) {
   return str.substring(0, number);

@@ -1,26 +1,23 @@
 /**
- * Mem-mask bagian nama dari alamat email dengan tanda bintang (*),
- * sambil tetap menampilkan huruf pertama dari nama.
+ * Menyamarkan (masking) bagian nama lokal dari sebuah alamat email demi privasi,
+ * dengan tetap membiarkan huruf paling pertama dari nama terlihat.
  *
- * Contoh: `fauzi@gmail.com` akan menjadi `f****@gmail.com`.
+ * Seluruh sisa karakter sebelum lambang `@` akan diganti dengan karakter bintang (`*`).
  *
- * @param email - Alamat email yang akan di-mask.
- * @returns String email dengan bagian nama di-mask menggunakan tanda bintang.
- *
- * @example
- * // Email dengan nama 5 huruf
- * const masked1 = maskEmail("fauzi@gmail.com");
- * console.log(masked1); // "f****@gmail.com"
+ * @param email - String alamat email utuh yang akan disamarkan.
+ * @returns String format baru di mana nama pengguna telah disensor sebagian.
  *
  * @example
- * // Email dengan nama lebih panjang
- * const masked2 = maskEmail("john.doe@yahoo.com");
- * console.log(masked2); // "j********@yahoo.com"
+ * ```tsx
+ * const emailAcak = maskEmail("fauzi@gmail.com");
+ * // Hasil: "f****@gmail.com"
  *
- * @example
- * // Email dengan nama 1 huruf
- * const masked3 = maskEmail("a@outlook.com");
- * console.log(masked3); // "a@outlook.com"
+ * const emailPanjang = maskEmail("john.doe@yahoo.com");
+ * // Hasil: "j********@yahoo.com"
+ *
+ * const emailSingkat = maskEmail("a@outlook.com");
+ * // Hasil: "a@outlook.com"
+ * ```
  */
 export default function maskEmail(email: string) {
   const [name, domain] = email.split("@");

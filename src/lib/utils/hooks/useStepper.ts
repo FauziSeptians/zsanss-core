@@ -2,63 +2,78 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 /**
- * Interface State untuk Stepper.
- * @template T - Tipe data string literal atau Enum untuk nama-nama step.
+ * Interface State untuk manajemen Stepper.
+ * 
+ * Mendefinisikan struktur data dan fungsi kontrol yang tersedia di dalam store Stepper.
+ * 
+ * @template T - Tipe data string literal atau Enum yang merepresentasikan nama-nama langkah (steps).
  */
 export interface StepperState<T extends string> {
-  /** Daftar urutan langkah dalam bentuk array string/enum. */
+  /** Daftar urutan langkah dalam bentuk array string atau enum secara berurutan. */
   steps: T[];
-  /** Nama langkah yang aktif saat ini. */
+  /** Nama langkah (step) yang sedang aktif saat ini. */
   currentStep: T;
-  /** Index numerik dari langkah aktif (dimulai dari 0). */
+  /** Indeks numerik dari langkah yang sedang aktif (dimulai dari 0). */
   currentIndex: number;
-  /** Total jumlah langkah yang terdaftar. */
+  /** Total jumlah langkah yang terdaftar di dalam stepper. */
   totalSteps: number;
-  /** Status apakah berada di langkah paling awal. */
+  /** Status boolean yang menandakan apakah pengguna berada di langkah pertama. */
   isFirstStep: boolean;
-  /** Status apakah berada di langkah paling akhir. */
+  /** Status boolean yang menandakan apakah pengguna berada di langkah terakhir. */
   isLastStep: boolean;
 
-  /** * Berpindah ke langkah tertentu berdasarkan nama langkah.
-   * @param step - Nama langkah tujuan (harus ada di dalam array steps).
+  /** 
+   * Fungsi untuk berpindah ke langkah tertentu secara langsung berdasarkan namanya.
+   * @param step - Nama langkah tujuan yang harus ada di dalam array `steps`.
    */
   setStep: (step: T) => void;
   
-  /** * Melangkah maju ke step berikutnya secara otomatis.
-   * Tidak akan mengeksekusi jika sudah di step terakhir.
+  /** 
+   * Fungsi untuk melangkah maju ke satu langkah berikutnya.
+   * Tidak akan melakukan apa-apa jika sudah berada di langkah terakhir.
    */
   nextStep: () => void;
   
-  /** * Melangkah mundur ke step sebelumnya secara otomatis.
-   * Tidak akan mengeksekusi jika sudah di step pertama.
+  /** 
+   * Fungsi untuk melangkah mundur ke satu langkah sebelumnya.
+   * Tidak akan melakukan apa-apa jika sudah berada di langkah pertama.
    */
   prevStep: () => void;
   
-  /** * Mengembalikan posisi stepper ke langkah pertama.
+  /** 
+   * Fungsi untuk mengembalikan posisi stepper ke langkah paling awal (indeks 0).
    */
   resetStepper: () => void;
 }
 
 /**
  * Factory untuk membuat Custom Hook Stepper yang terisolasi dan Type-Safe.
- * Menggunakan Zustand di balik layar untuk manajemen state.
- * * @template T - Tipe string literal dari urutan step.
- * @param stepsArray - Array konstan yang mendefinisikan urutan langkah.
- * * @example
- * // 1. Definisikan urutan step dengan 'as const' untuk Type-Safety maksimal
- * export const KYC_STEPS = [
- * 'UPLOAD_KTP',
- * 'FACE_RECOGNITION',
- * 'PERSONAL_DATA',
- * 'REVIEW'
+ * 
+ * Menggunakan Zustand secara internal untuk manajemen state global atau lokal komponen. 
+ * Sangat berguna untuk alur kerja multi-step seperti pendaftaran atau wizard.
+ * 
+ * @template T - Tipe string literal dari urutan langkah.
+ * @param stepsArray - Array konstan yang mendefinisikan urutan langkah dari awal hingga akhir.
+ * @returns Hook Zustand yang mengembalikan state dan aksi {@link StepperState}.
+ * 
+ * @example
+ * ```tsx
+ * // 1. Definisikan urutan langkah dengan 'as const'
+ * export const PendaftaranSteps = [
+ *   'DATA_DIRI',
+ *   'VERIFIKASI_EMAIL',
+ *   'SELESAI'
  * ] as const;
- * * // 2. Ekstrak tipenya agar bisa dipakai di prop komponen lain
- * export type KycStep = (typeof KYC_STEPS)[number];
- * * // 3. Buat hook kustom menggunakan factory
- * export const useKycStepper = createStepper<KycStep>([...KYC_STEPS]);
- * * // 4. Penggunaan di dalam komponen
- * const { currentStep, nextStep, isLastStep } = useKycStepper();
- * * @returns Zustand Hook yang berisi state {@link StepperState}.
+ * 
+ * // 2. Ekstrak tipe untuk koordinasi komponen
+ * export type PendaftaranStep = (typeof PendaftaranSteps)[number];
+ * 
+ * // 3. Buat hook menggunakan factory
+ * export const usePendaftaranStepper = createStepper<PendaftaranStep>([...PendaftaranSteps]);
+ * 
+ * // 4. Penggunaan di dalam komponen
+ * const { currentStep, nextStep, isFirstStep } = usePendaftaranStepper();
+ * ```
  */
 export const createStepper = <T extends string>(stepsArray: T[]) => {
   return create<StepperState<T>>()(
@@ -106,4 +121,4 @@ export const createStepper = <T extends string>(stepsArray: T[]) => {
       { name: 'StepperStore' }
     )
   );
-};
+};

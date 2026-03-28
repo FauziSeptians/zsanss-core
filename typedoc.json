@@ -6,21 +6,31 @@
     "./src/lib/utils/object",
     "./src/lib/utils/services",
     "./src/lib/utils/string",
-    "./src/lib/utils/design-patern"
+    "./src/lib/utils/design-pattern"
   ],
   "entryPointStrategy": "expand",
   "out": "docs/api",
   "plugin": ["typedoc-plugin-markdown"],
   
-  /* STRATEGI FLAT: Mencegah folder /functions/ atau /classes/ */
-  "outputFileStrategy": "members",
+  /* STRATEGI: Mencegah redirect member/file secara terpisah dengan menjadikan per-file sebagai modul utuh */
+  "outputFileStrategy": "modules",
   "flattenOutputFiles": true,
   "entryFileName": "index.md",
   
-  /* PENGATURAN TAMPILAN (Tanpa opsi yang bikin error) */
+  /* PENGATURAN TAMPILAN */
   "hidePageTitle": false,
   "hideBreadcrumbs": true,
   "cleanOutputDir": true,
   "excludeGroups": true,
-  "useCodeBlocks": true
+  "useCodeBlocks": true,
+  
+  /* PARAMETER & TABLE FORMAT (Plugin Markdown v4) */
+  "parametersFormat": "table",
+  "interfacePropertiesFormat": "table",
+  "classPropertiesFormat": "table",
+  "enumMembersFormat": "table",
+  "typeDeclarationFormat": "table",
+  "propertyMembersFormat": "table",
+  "expandObjects": true,
+  "disableSources": true
 }

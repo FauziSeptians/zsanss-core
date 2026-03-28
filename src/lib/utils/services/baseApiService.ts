@@ -1,20 +1,30 @@
 import axios, { type AxiosInstance } from 'axios';
 
 /**
- * Interface dasar untuk ID entitas.
- * Menjamin bahwa setiap entitas memiliki field ID yang konsisten.
+ * Kerangka *Interface* paling mendasar untuk menyelaraskan entitas data dengan ID unik.
+ *
+ * Menjamin bahwa kontrak model setiap entitas pasti memiliki *property* pemicu dasar 
+ * pengenal (`id`) secara konsisten.
  */
 export interface BaseEntity {
-  /** ID unik entitas, bisa berupa string (UUID) atau number (Auto-increment). */
+  /** 
+   * Identifikasi unik kunci entitas pelacak (Entity primary key). 
+   * Biasa berbentuk kombinasi string padat (UUID) maupun hitungan angka logis otomatis numerikal berantai (Auto-increment). 
+   */
   id?: string | number;
 }
 
 /**
- * Core Service Class abstrak untuk menangani operasi CRUD secara dinamis.
- * Menggunakan Axios untuk komunikasi HTTP dan mendukung interceptor token otomatis.
- * * @template T - Tipe data utama entitas (misal: User, Product).
- * @template C - Tipe data untuk operasi Create/Payload (DTO). Default: T.
- * @template U - Tipe data untuk operasi Update. Default: Partial dari C.
+ * Representasi Core Service Class bersifat abstrak sebagai *base controller* statis 
+ * pengelola interaksi protokol lalu lintas permintaan layanan CRUD (Create, Read, Update, Delete) 
+ * secara dinamikal.
+ *
+ * Berbekal perantara tangguh instansiasi `Axios` mandiri, siap memikul kendali untuk pertukaran HTTPS reguler, 
+ * *interceptors* injeksi identitas secara otomatis, dan respons adaptif komperhensif.
+ * 
+ * @template T - Skema tipe data struktural utama entitas representasi respons utuh.
+ * @template C - Format kerangka Data Transfer Object (*DTO*) penyusun entitas modifikasi payload murni untuk mode `Create`. Default: sejalan terhadap `T`.
+ * @template U - Format penyederhanaan fleksibel kerangka muatan penyesuaian/modifikasi (Update) opsional. Default: bersifat *Partial* dari tipe `C`.
  */
 export abstract class BaseApiService<T extends BaseEntity, C = T, U = Partial<C>> {
   /** Instance axios yang telah dikonfigurasi. */
@@ -23,23 +33,29 @@ export abstract class BaseApiService<T extends BaseEntity, C = T, U = Partial<C>
   protected resource: string;
 
   /**
-   * @param resource - Nama resource API.
-   * @param baseURL - URL dasar API. Default: '/api'.
-   * * @example
-   * // Contoh 1: Menggunakan BaseURL default ('/api')
+   * Mengkonstruksi arsitektur penanganan *service* baru menyesuaikan format *endpoint* dinamis.
+   *
+   * @param resource - Struktur nama pemetaan letak titik akhir (endpoint resource route).
+   * @param baseURL - Pondasi *hostname* utama awalan *prefix* konektor muara referensi pengarah API. Default merujuk secara lokal ke `'/api'`.
+   * 
+   * @example
+   * ```tsx
+   * // Contoh penerapan 1: Relasi endpoint jalur reguler rute Internal app ('/api/users')
    * class UserService extends BaseApiService<User> {
-   * constructor() {
-   * super('users'); 
+   *   constructor() {
+   *     // Secara bawaan menginduksi baseURL menjadi '/api'
+   *     super('users'); 
+   *   }
    * }
-   * }
-   * * @example
-   * // Contoh 2: Menggunakan BaseURL kustom (Microservice atau External API)
+   * 
+   * // Contoh penerapan 2: Delegasi komunikasi memfokusi modul independen / Microservice 
    * class SessionService extends BaseApiService<Session> {
-   * constructor() {
-   * // Endpoint akan menjadi: https://auth.api.com/v1/user-sessionmanagement
-   * super('user-sessionmanagement', 'https://auth.api.com/v1');
+   *   constructor() {
+   *     // Titik akses Endpoint mutlak menjadi utuh ke: https://auth.api.com/v1/user-sessionmanagement
+   *     super('user-sessionmanagement', 'https://auth.api.com/v1');
+   *   }
    * }
-   * }
+   * ```
    */
   constructor(resource: string, baseURL: string = '/api') {
     this.resource = resource;

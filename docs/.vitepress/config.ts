@@ -9,7 +9,7 @@ import path from 'path'
  */
 const getSideBarItems = (prefix: string) => {
   const fullPath = path.resolve(__dirname, `../../docs/api`)
-  
+
   if (!fs.existsSync(fullPath)) {
     console.warn(`[VitePress] Folder API tidak ditemukan: ${fullPath}`);
     return [];
@@ -20,18 +20,18 @@ const getSideBarItems = (prefix: string) => {
       const isMd = file.endsWith('.md');
       const hasPrefix = file.toLowerCase().startsWith(prefix.toLowerCase());
       const isSystemFile = ['index.md', 'README.md', 'globals.md', 'modules.md'].includes(file);
-      
+
       // KUNCI: Abaikan file yang mengandung tipe metadata di namanya
-      const isExtraFile = file.includes('.Function.') || 
-                          file.includes('.Interface.') || 
-                          file.includes('.TypeAlias.') || 
-                          file.includes('.Class.');
+      const isExtraFile = file.includes('.Function.') ||
+        file.includes('.Interface.') ||
+        file.includes('.TypeAlias.') ||
+        file.includes('.Class.');
 
       return isMd && hasPrefix && !isSystemFile && !isExtraFile;
     })
     .map((file) => {
       const fileName = file.replace('.md', '');
-      
+
       // Hapus prefix untuk tampilan sidebar (contoh: 'hooks.useModal' -> 'useModal')
       // Kita pakai regex agar penghapusan prefix tidak case-sensitive
       const label = fileName.replace(new RegExp(`^${prefix}`, 'i'), '');
@@ -58,7 +58,7 @@ export default defineConfig({
       {
         text: '⚓ Hooks',
         collapsed: false,
-        items: getSideBarItems('hooks.') 
+        items: getSideBarItems('hooks.')
       },
       {
         text: '🔢 Number Utils',
@@ -83,7 +83,7 @@ export default defineConfig({
       {
         text: '🏗️ Design Patterns',
         collapsed: false,
-        items: getSideBarItems('design-patern.')
+        items: getSideBarItems('design-pattern.')
       }
     ],
 

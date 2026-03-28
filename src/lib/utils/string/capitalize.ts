@@ -1,26 +1,24 @@
 /**
- * Mengubah huruf pertama dari sebuah string menjadi huruf kapital,
- * lalu menggabungkannya dengan sisa string tanpa perubahan.
+ * Mengubah huruf pertama dari sebuah string teks menjadi huruf kapital (uppercase).
  *
- * Jika string kosong, fungsi akan mengembalikan string kosong.
+ * Fungsi utilitas ini membaca karakter pertama dari string, mengapitalisasinya, 
+ * lalu menggabungkannya kembali dengan sisa karakter dari string asli.
+ * Cocok untuk menormalisasi tampilan nama atau kalimat sederhana.
  *
- * @param str - String yang ingin diubah huruf pertamanya menjadi kapital.
- * @returns String baru dengan huruf pertama kapital.
- *
- * @example
- * // Mengubah huruf pertama menjadi kapital
- * const word1 = capitalize("hello");
- * console.log(word1); // "Hello"
+ * @param str - String input yang akan diproses.
+ * @returns String baru di mana hanya huruf pertamanya yang berubah menjadi kapital.
  *
  * @example
- * // String dengan huruf pertama sudah kapital
- * const word2 = capitalize("World");
- * console.log(word2); // "World"
+ * ```tsx
+ * const kataBiasa = capitalize("hello");
+ * // Hasil: "Hello"
  *
- * @example
- * // String kosong menghasilkan string kosong
- * const empty = capitalize("");
- * console.log(empty); // ""
+ * const sudahKapital = capitalize("World");
+ * // Hasil: "World"
+ *
+ * const kosong = capitalize("");
+ * // Hasil: ""
+ * ```
  */
 export default function capitalize(str: string) {
   if (!str) return "";

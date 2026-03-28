@@ -1,48 +1,44 @@
 /**
- * Clones a given object by serializing it to JSON and then parsing it back.
+ * Membuat salinan (klon) secara mendalam dari sebuah entitas objek dengan teknik serialisasi JSON.
  *
- * This method performs a **deep clone** of the object, meaning nested objects
- * and arrays will also be duplicated rather than referenced.
+ * Pendekatan ini melakukan duplikasi obyek berjenjang (**deep clone**), yang berarti bahwa 
+ * sub-objek maupun sub-array yang bersarang (nested) akan disalin ulang secara fisik sehingga 
+ * tidak lagi berbagi pointer memori (reference) yang sama dengan variabel objek sumbernya.
  *
- * ⚠️ Limitations:
- * - Functions, `Date`, `Map`, `Set`, `undefined`, and other non-JSON values
- *   will not be preserved correctly.
- * - Circular references will cause an error.
+ * > [!WARNING]
+ * > Karena tekniknya bergantung pada engine JSON asli browser, terdapat batasan:
+ * > - Properti non-primitif khusus seperti _Function_, `Date`, `Map`, `Set`, `RegExp` 
+ * >   serta nilai tipe `undefined` akan otomatis hilang atau terkonversi parsial.
+ * > - Struktur objek dengan Referensi Melingkar (*Circular references*) akan memicu Error secara sekejap.
  *
- * @param object - The object to be cloned. Must be serializable to JSON.
- * @returns A new object that is a deep copy of the input.
+ * @param object - Objek yang akan direplikasi. Pastikan berstatus murni serializable ke JSON.
+ * @returns Objek turunan yang merupakan rupa salinan dari objek awal (*deep copy*).
  *
  * @example
- * ```ts
- * const original = { 
- *   name: "Alice", 
- *   age: 25, 
- *   address: { city: "Jakarta" } 
+ * ```tsx
+ * const profilAsli = { 
+ *   nama: "Alice", 
+ *   umur: 25, 
+ *   alamat: { kota: "Jakarta" } 
  * };
  *
- * const copy = ObjectClone(original);
+ * const profilCopy = objectClone(profilAsli);
  *
- * console.log(copy); 
- * // { name: "Alice", age: 25, address: { city: "Jakarta" } }
- *
- * console.log(copy === original); 
- * // false (different references)
- *
- * console.log(copy.address === original.address); 
- * // false (nested object also cloned)
+ * // Uji coba referensi (False)
+ * console.log(profilCopy === profilAsli); 
+ * 
+ * // Uji memori bersarang tersalin aman (False)
+ * console.log(profilCopy.alamat === profilAsli.alamat); 
  * ```
  *
  * @example
- * ```ts
- * // Cloning an array of objects
- * const arr = [{ id: 1 }, { id: 2 }];
- * const clonedArr = ObjectClone(arr);
- *
- * console.log(clonedArr); 
- * // [ { id: 1 }, { id: 2 } ]
- *
- * console.log(clonedArr === arr); 
- * // false
+ * ```tsx
+ * // Membuat replika deep array berisi kumpulan object
+ * const daftar = [{ id: 1 }, { id: 2 }];
+ * const daftarKlon = objectClone(daftar);
+ * 
+ * console.log(daftarKlon[0] === daftar[0]); 
+ * // Hasil: false
  * ```
  */
 export default function objectClone(object: object) {

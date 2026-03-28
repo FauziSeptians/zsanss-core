@@ -4,51 +4,49 @@ import { median } from "../number/median";
 import { sum } from "../number/sum";
 
 /**
- * Interface yang mendefinisikan operasi dasar untuk handler array angka.
+ * Antarmuka yang mendefinisikan fungsionalitas dan operasi dasar yang wajib dimiliki 
+ * oleh kelas pengelola array numerik.
  */
 export interface ArrayHandlerProps {
-  /** Menambahkan angka ke dalam array. */
+  /** Menambahkan sebuah angka baru ke urutan paling akhir dari array. */
   add: (num: number) => void;
 
-  /** Menghapus semua angka tertentu dari array. */
+  /** Menghapus seluruh kemunculan angka tertentu dari dalam array. */
   remove: (num: number) => void;
 
-  /** Menghitung jumlah elemen dalam array. */
+  /** Menghitung jumlah total elemen (panjang) yang saat ini ada di dalam array. */
   count: () => number;
 
-  /** Menghitung nilai rata-rata (mean) dari elemen array. */
+  /** Menghitung dan mengembalikan nilai rata-rata (mean) dari seluruh elemen array. */
   mean: () => number;
 
-  /** Menghitung nilai tengah (median) dari elemen array. */
+  /** Menghitung dan mengembalikan nilai tengah (median) dari seluruh elemen terurut. */
   median: () => number;
 
-  /** Menghitung jumlah total (sum) dari elemen array. */
+  /** Menghitung dan mengembalikan total kalkulasi penjumlahan (sum) dari seluruh elemen. */
   sum: () => number;
 
-  /** Menghitung jumlah total (sum) dari elemen array. */
-  freq: (num : number) => number;
+  /** Menghitung seberapa banyak (frekuensi) suatu angka muncul di dalam array. */
+  freq: (num: number) => number;
 
-  /** Mengembalikan array saat ini. */
+  /** Mengembalikan array saat ini sebagai output untuk digunakan di luar kelas. */
   result: () => number[];
 
-  //**Mengembalikan boolean jikalau number yang dicari terdapat di array temporary */
-  isExists : (num : number) => boolean; 
+  /** Memvalidasi apakah sebuah angka eksis di dalam array bernilai `true` jika iya. */
+  isExists: (num: number) => boolean; 
 }
 
 /**
- * A utility class for managing an array of numbers and performing
- * common statistical operations such as mean, median, and sum.
+ * Kelas utilitas untuk mengelola koleksi array berupa angka (numerik) secara efisien 
+ * sekaligus menyediakan metode instan untuk kalkulasi statistikal dasar (mean, median, sum).
  *
- * This class allows:
- * - Adding and removing numbers
- * - Checking if a number exists
- * - Counting elements
- * - Calculating mean, median, and sum
- * - Retrieving the current array
+ * Sangat berguna sebagai abstraksi untuk memanipulasi rentetan data angka tanpa 
+ * perlu mendefinisikan logika matematika berulang secara eksternal.
  *
  * @example
- * ```ts
+ * ```tsx
  * const handler = new ArrayHandler();
+ * 
  * handler.add(10);
  * handler.add(20);
  * handler.add(30);
@@ -56,79 +54,64 @@ export interface ArrayHandlerProps {
  * console.log(handler.result()); 
  * // [10, 20, 30]
  *
- * console.log(handler.count()); 
- * // 3
- *
- * console.log(handler.isExists(20)); 
- * // true
- *
  * console.log(handler.mean()); 
- * // 20
- *
- * console.log(handler.median()); 
- * // 20
- *
- * console.log(handler.sum()); 
- * // 60
+ * // Output rata-rata: 20
  *
  * handler.remove(20);
  * console.log(handler.result()); 
  * // [10, 30]
- *
- * console.log(handler.isExists(20)); 
- * // false
  * ```
  */
 export class ArrayHandler implements ArrayHandlerProps {
   private array: number[] = [];
 
   /**
-   * Checks if a given number exists in the array.
+   * Memeriksa keberadaan suatu angka secara spesifik di dalam array internal.
    *
-   * @param num - The number to check.
-   * @returns `true` if the number exists, otherwise `false`.
+   * @param num - Angka target yang dicari keberadaannya.
+   * @returns Nilai `true` jika angka tersebut ditemukan, atau `false` jika tidak ada.
    */
   public isExists(num: number): boolean {
     const res = this.array.find((item) => item === num);
     return Boolean(res);
   }
 
-  /** Adds a number to the array. */
+  /** Menambahkan angka pada urutan paling akhir dari array internal. */
   public add(num: number): void {
     this.array.push(num);
   }
 
-  /** Removes all occurrences of a number from the array. */
+  /** Menyaring (filter) dan menghapus seluruh elemen numerik tersebut jika ditemukan. */
   public remove(num: number): void {
     this.array = this.array.filter((item) => item !== num);
   }
 
-  /** Returns the number of elements in the array. */
+  /** Mengembalikan panjang atau banyaknya koleksi elemen angka di dalam array saat ini. */
   public count(): number {
     return this.array.length;
   }
 
-  /** Calculates the mean (average) of the numbers in the array. */
+  /** Menjalankan utilitas kalkulasi angka rata-rata (mean) secara terpadu mengacu ke array ini. */
   public mean(): number {
     return mean(this.array);
   }
 
-  /** Calculates the median of the numbers in the array. */
+  /** Menjalankan utilitas perhitungan titik tengah (median) data. */
   public median(): number {
     return median(this.array);
   }
 
-  /** Calculates the sum of the numbers in the array. */
+  /** Menjalankan fungsi penjumlahan total (sum) berantai di seluruh isi data numerik murni saat ini. */
   public sum(): number {
     return sum(this.array);
   }
 
-  /** Calculates frequency of the search number in the array. */
+  /** Mengkalkulasi nilai frekuensi mutlak berapa kali presensi angka target ini mengulang. */
   public freq(num : number) : number { 
     return arrayFrequency(this.array, num);
   }
 
-  /** Returns the current array of numbers. */
+  /** Mengembalikan koleksi state hasil manipulasi data yang aman untuk divalidasi dan digunakan. */
   public result(): number[] {
     return this.array;
   }

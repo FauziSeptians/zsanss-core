@@ -1,33 +1,42 @@
 /**
- * A generic handler class for managing an object of type T.
- * Provides methods to get, set, update (single or bulk), and reset the object.
+ * Kelas utilitas generik untuk mempermudah manajemen suatu state objek bertipe `T`.
+ * 
+ * Kelas ini mendesain antarmuka perantara terpadu untuk berinteraksi dengan sebuah objek tunggal, 
+ * menyediakan metode pembacaan (`get`), penggantian utuh (`set`), pembaruan spesifik satu field (`update`),
+ * pembaruan gabungan massal (`bulk`), sampai dengan pengembalian state ke wujud semula (`reset`).
  *
- * @typeParam T - The shape of the object being handled.
+ * @template T - Basis struktur dari kerangka skema data objek yang sedang ditangani.
  *
  * @example
- * ```ts
- * type Student = {
+ * ```tsx
+ * interface ProfilPengguna {
  *   id: number;
- *   name: string;
- *   class: string;
- * };
+ *   nama: string;
+ *   pekerjaan: string;
+ * }
  *
- * const data = new ObjectHandler<Student>({ id: 0, name: "", class: "" });
+ * // Tentukan kerangka state profil
+ * const stateProfil = new ObjectHandler<ProfilPengguna>({ 
+ *   id: 0, 
+ *   nama: "", 
+ *   pekerjaan: "" 
+ * });
  *
- * console.log(data.getObject());
- * // { id: 0, name: "", class: "" }
+ * // Uji pembacaan
+ * console.log(stateProfil.getObject());
+ * // Output: { id: 0, nama: "", pekerjaan: "" }
  *
- * data.updateObject("name", "Alice");
- * console.log(data.getObject());
- * // { id: 0, name: "Alice", class: "" }
+ * // Rubah per satu bidang (terjamin ketat Type-Safe)
+ * stateProfil.updateObject("nama", "Tono");
+ * 
+ * // Rubah banyak data sekaligus
+ * stateProfil.updateBulk({ nama: "Tini", pekerjaan: "Desainer" });
+ * 
+ * console.log(stateProfil.getObject());
+ * // Output: { id: 0, nama: "Tini", pekerjaan: "Desainer" }
  *
- * data.updateBulk({ name: "Bob", class: "Math" });
- * console.log(data.getObject());
- * // { id: 0, name: "Bob", class: "Math" }
- *
- * data.reset();
- * console.log(data.getObject());
- * // { id: 0, name: "", class: "" }
+ * // Hapus semua hasil modifikasi dan kembali ke status orisinil
+ * stateProfil.reset();
  * ```
  */
 export class ObjectHandler<T extends object> {
@@ -39,37 +48,38 @@ export class ObjectHandler<T extends object> {
     this.initial = { ...initial }; // simpan salinan awal untuk reset
   }
 
-  /** Returns the current object. */
+  /** Mengembalikan bentuk seluruh susunan objek pada kondisi mutakhir. */
   public getObject(): T {
     return this.object;
   }
 
-  /** Replaces the object with a new one. */
+  /** Mengganti bersih (Replace) seluruh objek dari akar datanya menggunakan obyek baru. */
   public setObject(newObj: T): void {
     this.object = newObj;
   }
 
   /**
-   * Updates a single property of the object.
+   * Mengubah susunan satu nama properti yang disasar milik suatu objek secara dinamis.
    *
-   * @param key - The key of the property to update.
-   * @param value - The new value for the property.
+   * @param key - Identitas nama properti (harus valid sebagai struktur dari `T`).
+   * @param value - Konten data nilai yang disuntikkan ke sasaran properti.
    */
   public updateObject<K extends keyof T>(key: K, value: T[K]): void {
     this.object[key] = value;
   }
 
   /**
-   * Updates multiple properties of the object at once.
+   * Mengintegrasikan satu grup nilai baru dari input secara massal terhadap objek bawaan.
    *
-   * @param updates - A partial object containing the properties to update.
+   * @param updates - Objek pelengkap transisi yang mewakili nilai baru `T`.
    */
   public updateBulk(updates: Partial<T>): void {
     this.object = { ...this.object, ...updates };
   }
 
   /**
-   * Resets the object back to its initial state.
+   * Menetralkan kumpulan nilai perubahan.
+   * Mengembalikan susunan status obyek mentah ke rekam instansiasi awalnya.
    */
   public reset(): void {
     this.object = { ...this.initial };

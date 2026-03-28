@@ -1,27 +1,23 @@
 /**
- * Menghapus elemen duplikat dari sebuah array dan mengembalikan array baru
- * yang hanya berisi nilai unik.
- *
- * Fungsi ini menggunakan `Set` untuk memastikan setiap elemen hanya muncul sekali.
- * Urutan elemen tetap mengikuti urutan pertama kali muncul di array.
- *
- * @param arr - Array berisi elemen-elemen (string, number, atau tipe lain yang bisa dibandingkan).
- * @returns Array baru yang berisi elemen unik tanpa duplikat.
- *
+ * Menghapus elemen duplikat dari sebuah array dan menghasilkan array baru berisi nilai unik.
+ * 
+ * Fungsi ini menggunakan struktur data `Set` untuk menjamin keunikan nilai secara efisien. 
+ * Urutan elemen tetap dipertahankan sesuai dengan kemunculan pertamanya di dalam array asli.
+ * 
+ * @template T - Tipe data elemen di dalam array (string, number, atau objek).
+ * @param arr - Array sumber yang mungkin mengandung nilai duplikat.
+ * @returns Array baru yang hanya berisi elemen-elemen unik.
+ * 
  * @example
- * // Array angka dengan duplikat
- * const numbers = uniqueArray([1, 2, 2, 3, 4, 4, 5]);
- * console.log(numbers); // [1, 2, 3, 4, 5]
- *
- * @example
- * // Array string dengan duplikat
- * const fruits = uniqueArray(["apple", "banana", "apple", "orange"]);
- * console.log(fruits); // ["apple", "banana", "orange"]
- *
- * @example
- * // Array kosong menghasilkan array kosong
- * const empty = uniqueArray([]);
- * console.log(empty); // []
+ * ```tsx
+ * // Mengambil angka unik
+ * const angkaUnik = uniqueArray([1, 2, 2, 3, 4, 4, 1]);
+ * // Hasil: [1, 2, 3, 4]
+ * 
+ * // Mengambil string unik
+ * const kataUnik = uniqueArray(["apple", "banana", "apple"]);
+ * // Hasil: ["apple", "banana"]
+ * ```
  */
 export function uniqueArray<T>(arr: T[]): T[] {
   return [...new Set(arr)];

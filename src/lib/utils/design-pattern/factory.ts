@@ -1,19 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /**
- * General Factory Method
+ * Fungsi Factory Method generik untuk menginstansiasi objek berdasarkan key.
+ * 
+ * Fungsi ini mengambil `type` sebagai kunci dan `registry` yang berisi pemetaan 
+ * antara kunci dengan konstruktor (class), lalu mengembalikan instance baru dari class tersebut.
  *
- * @param type - Key untuk memilih produk
- * @param registry - Map dari key ke constructor
- * @returns Instance dari tipe sesuai key
+ * @template R - Tipe Registry yang merupakan objek dengan key string dan value berupa konstruktor.
+ * @template K - Key valid yang tersedia di dalam Registry `R`.
+ * 
+ * @param type - Kunci untuk memilih produk (class) yang ingin diinstansiasi.
+ * @param registry - Objek yang memetakan kunci ke konstruktor class.
+ * @returns Instance dari class yang sesuai dengan kunci `type`.
+ * @throws {Error} Jika kunci `type` tidak ditemukan di dalam `registry`.
  *
  * @example
- * ```ts
- * // Generic interface
+ * ```tsx
+ * // 1. Definisikan Interface
  * interface Data<T> {
  *   getInfo(): T;
  * }
  *
- * // Implementations
+ * // 2. Implementasi Class
  * class Student implements Data<{ name: string }> {
  *   getInfo() {
  *     return { name: "Fauzi" };
@@ -26,13 +33,13 @@
  *   }
  * }
  *
- * // Registry
+ * // 3. Registry
  * const schoolRegistry = {
  *   student: Student,
  *   teacher: Teacher,
  * } as const;
  *
- * // Usage
+ * // 4. Penggunaan
  * const student = factory("student", schoolRegistry);
  * console.log(student.getInfo()); // { name: "Fauzi" }
  *

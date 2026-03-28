@@ -1,45 +1,28 @@
 /**
- * Flattens a nested array of numbers into a single-level array.
+ * Meratakan (flatten) array bersarang yang berisi deretan angka menjadi satu tingkat dimensi.
  *
- * This function uses `Array.prototype.flat` with `Infinity` depth,
- * ensuring that all levels of nested arrays are flattened into one.
+ * Fungsi ini memanfaatkan antarmuka `Array.prototype.flat` dengan parameter `Infinity`,
+ * memastikan bahwa semua hierarki array bersarang dapat terurai secara utuh menjadi satu level.
  *
- * ⚠️ Notes:
- * - Only works correctly with arrays of numbers. If the array contains
- *   non-numeric values, TypeScript typing may need to be adjusted.
- * - Very large or deeply nested arrays may impact performance.
+ * > [!WARNING]
+ * > - Direkomendasikan khusus hanya beroperasi pada array berisi nilai numerik murni.
+ * > - Jika terdapat array dengan muatan `any` yang kompleks, TypeScript mungkin membutuhkan penyesuaian.
+ * > - Array yang sangat besar dimensinya berpotensi memberikan gangguan minor terhadap *performance*.
  *
- * @param arr - A nested array of numbers to be flattened.
- * @returns A new array containing all numbers from the input, flattened into one level.
- *
- * @example
- * ```ts
- * // Flattening a simple nested array
- * const nested = [1, [2, 3], [4, [5, 6]]];
- * const flat = flattenArray(nested as unknown as number[]);
- *
- * console.log(flat);
- * // Output: [1, 2, 3, 4, 5, 6]
- * ```
+ * @param arr - Array bersarang numerik (Nested array of numbers) yang akan dimanipulasi.
+ * @returns Array dimensi tunggal yang memuat kumpulan angka utuh yang dijamin tak lagi bersarang.
  *
  * @example
- * ```ts
- * // Flattening an already flat array
- * const arr = [10, 20, 30];
- * const flat = flattenArray(arr);
- *
- * console.log(flat);
- * // Output: [10, 20, 30]
- * ```
- *
- * @example
- * ```ts
- * // Flattening deeply nested arrays
- * const deepNested = [1, [2, [3, [4, [5]]]]];
- * const flat = flattenArray(deepNested as unknown as number[]);
- *
- * console.log(flat);
- * // Output: [1, 2, 3, 4, 5]
+ * ```tsx
+ * // Meratakan tipe data bersarang simpel
+ * const barisNested = [1, [2, 3], [4, [5, 6]]];
+ * const arrayRata = flattenArray(barisNested as unknown as number[]);
+ * // Output array: [1, 2, 3, 4, 5, 6]
+ * 
+ * // Menggunakan array yang cukup dalam bersarangnya
+ * const dalam = [1, [2, [3, [4, [5]]]]];
+ * const rata = flattenArray(dalam as unknown as number[]);
+ * // Output array: [1, 2, 3, 4, 5]
  * ```
  */
 export default function flattenArray(arr: number[]) {

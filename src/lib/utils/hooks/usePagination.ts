@@ -1,29 +1,48 @@
 import { useState } from 'react';
 
 /**
- * Properti untuk hook usePagination.
+ * Properti konfigurasi untuk hook {@link usePagination}.
  */
 interface UsePaginationProps {
-  /** Total seluruh item dalam dataset. */
+  /** Jumlah total seluruh item di dalam dataset yang akan dipaginasi. */
   totalItems: number;
-  /** Jumlah item yang ingin ditampilkan per halaman. */
+  /** Batas jumlah item yang ingin ditampilkan per halaman tunggal. */
   itemsPerPage: number;
-  /** Halaman awal saat pertama kali dimuat. Default adalah 1. */
+  /** Nomor halaman awal saat komponen pertama kali dimuat. Default: `1`. */
   initialPage?: number;
 }
 
 /**
- * Hook kustom untuk mengelola logika pagination secara lokal.
- * * @param props - Objek konfigurasi {@link UsePaginationProps}.
- * @returns Objek yang berisi state halaman saat ini, fungsi navigasi, dan indeks data.
- * * @example
+ * Hook kustom untuk mengelola logika navigasi halaman (pagination) secara lokal.
+ * 
+ * Hook ini menghitung total halaman, indeks awal/akhir untuk pemotongan data (slicing), 
+ * serta menyediakan fungsi navigasi seperti `nextPage`, `prevPage`, dan `goToPage`.
+ * 
+ * @param props - Objek konfigurasi yang meliputi `totalItems`, `itemsPerPage`, dan `initialPage`.
+ * @returns Objek yang berisi state halaman saat ini, total halaman, fungsi navigasi, serta indeks data.
+ * 
+ * @example
  * ```tsx
- * const { currentPage, nextPage, startIndex, endIndex } = usePagination({
- * totalItems: 100,
- * itemsPerPage: 10
+ * const { 
+ *   currentPage, 
+ *   nextPage, 
+ *   startIndex, 
+ *   endIndex, 
+ *   canNextPage 
+ * } = usePagination({
+ *   totalItems: 100,
+ *   itemsPerPage: 10
  * });
- * * // Gunakan slice untuk menampilkan data
- * const currentData = data.slice(startIndex, endIndex);
+ * 
+ * // Menggunakan indeks untuk memotong array data lokal
+ * const currentData = allData.slice(startIndex, endIndex);
+ * 
+ * return (
+ *   <div>
+ *     {currentData.map(item => <Card key={item.id} data={item} />)}
+ *     <button onClick={nextPage} disabled={!canNextPage}>Next</button>
+ *   </div>
+ * );
  * ```
  */
 export const usePagination = ({
@@ -33,48 +52,49 @@ export const usePagination = ({
 }: UsePaginationProps) => {
   const [currentPage, setCurrentPage] = useState(initialPage);
 
-  /** Total halaman yang tersedia berdasarkan totalItems dan itemsPerPage. */
+  /** Menghitung total halaman yang tersedia berdasarkan dataset. */
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
-  /** Indeks awal item pada halaman saat ini (inklusif). Digunakan untuk `Array.slice()`. */
+  /** Indeks awal item pada halaman saat ini untuk kebutuhan `Array.slice()`. */
   const startIndex = (currentPage - 1) * itemsPerPage;
   
-  /** Indeks akhir item pada halaman saat ini (eksklusif). Digunakan untuk `Array.slice()`. */
+  /** Indeks akhir item pada halaman saat ini untuk kebutuhan `Array.slice()`. */
   const endIndex = startIndex + itemsPerPage;
 
   /**
-   * Berpindah ke halaman tertentu secara spesifik.
-   * @param page - Nomor halaman tujuan.
+   * Fungsi untuk berpindah ke nomor halaman tertentu secara spesifik.
+   * 
+   * @param page - Nomor halaman tujuan. Akan divalidasi agar tetap dalam rentang yang valid.
    */
   const goToPage = (page: number) => {
     const pageNumber = Math.max(1, Math.min(page, totalPages));
     setCurrentPage(pageNumber);
   };
 
-  /** Berpindah ke halaman berikutnya jika tersedia. */
+  /** Berpindah secara otomatis ke satu halaman berikutnya jika tersedia. */
   const nextPage = () => goToPage(currentPage + 1);
 
-  /** Berpindah ke halaman sebelumnya jika tersedia. */
+  /** Berpindah secara otomatis ke satu halaman sebelumnya jika tersedia. */
   const prevPage = () => goToPage(currentPage - 1);
 
   return {
-    /** Halaman aktif saat ini. */
+    /** Nomor halaman yang sedang aktif saat ini. */
     currentPage,
-    /** Jumlah total halaman yang tersedia. */
+    /** Jumlah total halaman yang berhasil dihitung dari dataset. */
     totalPages,
-    /** Fungsi untuk berpindah ke halaman selanjutnya. */
+    /** Fungsi pemicu untuk berpindah ke halaman selanjutnya. */
     nextPage,
-    /** Fungsi untuk berpindah ke halaman sebelumnya. */
+    /** Fungsi pemicu untuk berpindah ke halaman sebelumnya. */
     prevPage,
-    /** Fungsi untuk berpindah ke halaman yang ditentukan. */
+    /** Fungsi pemicu untuk melompat ke halaman tertentu. */
     goToPage,
-    /** Indeks awal data untuk slicing array. */
+    /** Indeks awal data yang digunakan untuk memotong (slice) array utama. */
     startIndex,
-    /** Indeks akhir data untuk slicing array. */
+    /** Indeks akhir data yang digunakan untuk memotong (slice) array utama. */
     endIndex,
-    /** Flag untuk mengecek apakah tombol 'Next' harus aktif. */
+    /** Flag penanda apakah pengguna masih bisa berpindah ke halaman berikutnya. */
     canNextPage: currentPage < totalPages,
-    /** Flag untuk mengecek apakah tombol 'Previous' harus aktif. */
+    /** Flag penanda apakah pengguna masih bisa kembali ke halaman sebelumnya. */
     canPrevPage: currentPage > 1,
   };
-};
+};
