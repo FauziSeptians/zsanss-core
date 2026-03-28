@@ -1,73 +1,106 @@
-# React + TypeScript + Vite
+# 🚀 Zsanss Core
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> Kumpulan utility, hooks, api services, dan design pattern type-safe untuk mempercepat development web modern (React/Next.js).
 
-Currently, two official plugins are available:
+Zsanss Core adalah *Core UI Component Library* dan *Toolkit* yang dirancang khusus untuk meminimalisasi *boilerplate* (duplikasi kode yang sama berulang-ulang) pada project React skala besar. Ditulis menggunakan TypeScript (`strict` mode) dengan penekanan pada **Developer Experience (DX)** dan performa *tree-shaking*. 
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## ✨ Fitur Utama
 
-## React Compiler
+- **Comprehensive Utilities:** Manipulasi Arrays, Strings, Numbers, dan Objects secara mulus (`capitalize`, `formatCurrency`, `ObjectHandler`, dll).
+- **Advanced Modern Hooks:** Mengelola state kompleks cukup dengan satu baris reaktif (`useStepper`, `useSyncForm`, `usePagination`, dll).
+- **API Services Built in:** Mendukung abstraksi *Object-Oriented* Axios (`BaseApiService`) untuk kontrol komunikasi HTTP CRUD dinamis.
+- **Implementasi Design Pattern:** *Builder* dan *Factory* model untuk merapikan instansiasi objek klien.
+- **Super Ringan & Tanpa Bentrok:** Menggunakan konsep `peerDependencies` untuk memastikan tidak ada duplikasi engine React.
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+---
 
-## Expanding the ESLint configuration
+## 📦 Instalasi
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Zsanss Core didistribusikan melalui [NPM](https://www.npmjs.com/). Kamu dapat memasangnya menggunakan package manager pilihanmu:
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+```bash
+# Menggunakan NPM
+npm install zsanss-core
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+# Menggunakan Yarn
+yarn add zsanss-core
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Menggunakan PNPM
+pnpm add zsanss-core
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### ⚠️ Persyaratan (Peer Dependencies)
+Pustaka ini didesain sebagai utilitas *UI Core Layer*. Agar eksekusi kode berjalan lancar tanpa mengalami *multiple instance conflict*, pastikan kamu sudah menanamkan beberapa pustaka ekosistem berikut ke dalam `package.json` kamu (aplikasi target):
+- `react` (v18+)
+- `react-dom` (v18+)
+- `@tanstack/react-query` (v5+)
+- `react-hook-form` (v7+)
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+---
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 💻 Contoh Penggunaan Singkat
+
+Semua metode yang ada pada Zsanss Core memiliki tipe kembalian otomatis *(Inferred Types)* yang kokoh.
+
+### 1. Memanggil Utilitas String & Format
+```tsx
+import { formatCurrency, capitalize, slugify } from 'zsanss-core';
+
+console.log(formatCurrency(150000));     // Output: "Rp 150.000"
+console.log(capitalize('hello world'));  // Output: "Hello world"
+console.log(slugify('Produk Baru 2024'));// Output: "produk-baru-2024"
 ```
+
+### 2. Mengolah Skenario State Hook Kompleks
+```tsx
+import { useStepper } from 'zsanss-core';
+
+function Onboarding() {
+  const { step, nextStep, prevStep } = useStepper({ 
+    initialStep: 1, 
+    maxStep: 4 
+  });
+
+  return (
+    <div>
+      <p>Langkah saat ini: {step}</p>
+      <button onClick={prevStep}>Kembali</button>
+      <button onClick={nextStep}>Lanjut</button>
+    </div>
+  )
+}
+```
+
+### 3. Komunikasi Service OOP (Axios Abstraction)
+```tsx
+import { BaseApiService } from 'zsanss-core';
+
+// Mengatur Controller otomatis
+class UserService extends BaseApiService<User> {
+  constructor() {
+    super('users', 'https://api.domain.com/v1');
+  }
+}
+
+const myServ = new UserService();
+// Memanggil /users/1 dengan dukungan tipe balikan yang presisi!
+const hero = await myServ.getById(1); 
+```
+
+---
+
+## 📖 Dokumentasi Lengkap
+
+Penjelasan menyeluruh tentang fungsionalitas parameter (tipe, opsional, maupun *fallback* eksekusi) dapat dieksplorasi secara visual pada **[Platform API Reference Kami](#)** (TBA pada Tautan Repo).
+
+> Atau jalankan secara lokal untuk mengurai API Reference menggunakan Vitepress:
+> ```bash
+> npm run docs:dev
+> ```
+
+---
+
+## 📜 Lisensi & Kontribusi
+
+Berdasarkan [MIT License](LICENSE).  
+Dirancang untuk efisiensi ekosistem oleh [@FauziSeptians](https://github.com/FauziSeptians). Silakan buka isian Pull Request atau Lembar Isu (*Issue*) apabila Anda mendeteksi potensi pembaruan kode.🚀
