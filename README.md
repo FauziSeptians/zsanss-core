@@ -101,6 +101,4 @@ Penjelasan menyeluruh tentang fungsionalitas parameter (tipe, opsional, maupun *
 ---
 
 ## 📜 Lisensi & Kontribusi
-
-Berdasarkan [MIT License](LICENSE).  
 Dirancang untuk efisiensi ekosistem oleh [@FauziSeptians](https://github.com/FauziSeptians). Silakan buka isian Pull Request atau Lembar Isu (*Issue*) apabila Anda mendeteksi potensi pembaruan kode.🚀
