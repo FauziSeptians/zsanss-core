@@ -1,6 +1,6 @@
 {
   "name": "zsanss-core",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "type": "module",
   "description": "Modern, accessible, and fully customizable React UI component library built with Tailwind CSS. Production-ready components with TypeScript support.",
   "author": {
